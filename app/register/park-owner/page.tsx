@@ -13,6 +13,7 @@ import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import {
   useAuthControllerLoginMutation,
   useParkControllerCreateParkMutation,
+  useUserControllerCreateIndividualBodyMutation,
   useUserControllerCreateParkOwnerBodyMutation,
 } from "@/store/api";
 import { useAppDispatch } from "@/store/redux/store";
@@ -35,13 +36,13 @@ const Page = () => {
   // const [passwordError, setPassordError] = useState('');
   // const [isLoading, setIsLoading] = useState<boolean>(false);
   const [confirmPassword, setShowConfirmPassword] = useState(false);
-  const [showScreen, setShowScreen] = useState(3);
+  const [showScreen, setShowScreen] = useState(1);
   const [image, setImage] = useState<string | undefined>(undefined);
 
   const [login] = useAuthControllerLoginMutation();
 
   const [signup, { isLoading }] =
-    useUserControllerCreateParkOwnerBodyMutation();
+  useUserControllerCreateIndividualBodyMutation();
 
   const [addPark] = useParkControllerCreateParkMutation();
 
@@ -52,8 +53,9 @@ const Page = () => {
     if (storedUserData) {
       setUserData(JSON.parse(storedUserData));
     }
-  }, []);
+  }, [showScreen]);
 
+  console.log(userData)
   const initialData = {
     firstname: "",
     lastname: "",
@@ -211,7 +213,12 @@ const Page = () => {
               localStorage.setItem("auth_token", token);
               localStorage.setItem("user", JSON.stringify(user));
 
-              setShowScreen(3);
+              setUserData(user); // Update state immediately
+  
+              setTimeout(() => {
+                setShowScreen(3); // Delay navigation until localStorage is set
+              }, 100); 
+            
               // Redirect to dashboard/home
 
               // router.push("/dashboard/home");
@@ -237,10 +244,23 @@ const Page = () => {
         phone: values.phone,
         city: values.city,
         coordinate: values.coordinate,
+
+
+        region: values.region,
+        image: values.image || "https://res.cloudinary.com/demo/image/upload/v1695735734/sample.jpg",
+        parkOwnerId: userData?.individual ? userData?.individual?.userId : userData?.corporateBody?.userId
       };
 
       try {
         const addParkResponse = await addPark(parkPayload).unwrap();
+        if (addParkResponse?.status === 200 || addParkResponse?.status === 201) {
+          toast.success(addParkResponse?.message || "Park added successfully");
+          router.push("/dashboard/home");
+      
+        } else {
+          toast.error(addParkResponse?.message || "error");
+
+        }
       } catch (signupError) {
         console.error("Error during signup:", signupError);
         toast.error("An error occurred during signup.");
@@ -306,11 +326,6 @@ const Page = () => {
         {/* Left Section */}
         <div className="w-full z-10 h-screen lg:block hidden relative">
           <div className="absolute h-screen z-10 object-cover w-full rounded-xl">
-            {/* <img
-            className="h-full z-10 object-cover w-full"
-            src="/onboarding/urbanFleetRegBg.jpg"
-            alt=""
-          /> */}
 
             <Image
               className="h-full z-10 object-cover w-full"
@@ -767,12 +782,13 @@ const Page = () => {
 
                       <div className={showScreen === 3 ? "block " : "hidden"}>
                         <div className="mb-7">
+                        <div className="grid md:grid-cols-2 gap-3 w-full">
                           <div className=" mb-3 relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px]  font-[500] "
                               htmlFor="description"
                             >
-                              Name of Park
+                              Name of the park
                             </label>
                             <Field
                               className="mt-1 block w-full h-10 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
@@ -785,7 +801,27 @@ const Page = () => {
                               <ErrorMessage name="description" />
                             </p>
                           </div>
+                          <div className=" mb-3 relative">
+                            <label
+                              className=" text-[#2B2C2B] text-[16px] font-[500] "
+                              htmlFor="region"
+                            >
+                              Region
+                            </label>
+                            <Field
+                              className="mt-1 block w-full h-10 border-[0.5px]  pl-3 rounded-[10px] focus:outline-none border-[#D9D9D9] "
+                              name="region"
+                              type="text"
+                              id="region"
+                              placeholder=""
+                            />
+                            <p className="text-red-700 text-xs mt-1 ">
+                              <ErrorMessage name="region" />
+                            </p>
+                          </div>
+</div>
 
+<div className="grid md:grid-cols-2 gap-3 w-full">
                           <div className=" mb-3 relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
@@ -837,6 +873,9 @@ const Page = () => {
                               <ErrorMessage name="address" />
                             </p>
                           </div>
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-3 w-full">
                           <div className=" mb-3 relative">
                             <label
                               className=" text-[#2B2C2B] text-[16px] font-[500] "
@@ -873,6 +912,7 @@ const Page = () => {
                             <p className="text-red-700 text-xs mt-1 ">
                               <ErrorMessage name="coordinate" />
                             </p>
+                          </div>
                           </div>
                         </div>
                       </div>

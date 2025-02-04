@@ -229,6 +229,62 @@ const injectedRtkApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    notificationControllerCreate: build.mutation<
+      NotificationControllerCreateApiResponse,
+      NotificationControllerCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/notifications`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
+    notificationControllerFindAll: build.query<
+      NotificationControllerFindAllApiResponse,
+      NotificationControllerFindAllApiArg
+    >({
+      query: () => ({ url: `/notifications` }),
+    }),
+    notificationControllerFindOne: build.query<
+      NotificationControllerFindOneApiResponse,
+      NotificationControllerFindOneApiArg
+    >({
+      query: (queryArg) => ({ url: `/notifications/${queryArg}` }),
+    }),
+    notificationControllerUpdate: build.mutation<
+      NotificationControllerUpdateApiResponse,
+      NotificationControllerUpdateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/notifications/${queryArg.id}`,
+        method: "PATCH",
+        body: queryArg.updateNotificationDto,
+      }),
+    }),
+    notificationControllerRemove: build.mutation<
+      NotificationControllerRemoveApiResponse,
+      NotificationControllerRemoveApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/notifications/${queryArg}`,
+        method: "DELETE",
+      }),
+    }),
+    notificationControllerFindAllByUser: build.query<
+      NotificationControllerFindAllByUserApiResponse,
+      NotificationControllerFindAllByUserApiArg
+    >({
+      query: (queryArg) => ({ url: `/notifications/user/${queryArg}` }),
+    }),
+    notificationControllerMarkAsRead: build.mutation<
+      NotificationControllerMarkAsReadApiResponse,
+      NotificationControllerMarkAsReadApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/notifications/${queryArg}/mark-as-read`,
+        method: "PATCH",
+      }),
+    }),
     vehicleControllerCreateVehicleType: build.mutation<
       VehicleControllerCreateVehicleTypeApiResponse,
       VehicleControllerCreateVehicleTypeApiArg
@@ -527,6 +583,12 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/parks/${queryArg}`, method: "DELETE" }),
     }),
+    parkControllerFindParkByUserId: build.query<
+      ParkControllerFindParkByUserIdApiResponse,
+      ParkControllerFindParkByUserIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/parks/user/${queryArg}` }),
+    }),
     tripControllerCreateTrip: build.mutation<
       TripControllerCreateTripApiResponse,
       TripControllerCreateTripApiArg
@@ -651,7 +713,7 @@ const injectedRtkApi = api.injectEndpoints({
       BookingControllerFindBookingByIdApiResponse,
       BookingControllerFindBookingByIdApiArg
     >({
-      query: (queryArg) => ({ url: `/bookings/${queryArg}` }),
+      query: (queryArg) => ({ url: `/bookings/get-one/${queryArg}` }),
     }),
     bookingControllerUpdateBooking: build.mutation<
       BookingControllerUpdateBookingApiResponse,
@@ -1279,7 +1341,12 @@ const injectedRtkApi = api.injectEndpoints({
       LocationStateControllerFindAllApiResponse,
       LocationStateControllerFindAllApiArg
     >({
-      query: () => ({ url: `/location-states` }),
+      query: (queryArg) => ({
+        url: `/location-states`,
+        params: {
+          countryId: queryArg,
+        },
+      }),
     }),
     locationStateControllerFindOne: build.query<
       LocationStateControllerFindOneApiResponse,
@@ -1420,7 +1487,12 @@ const injectedRtkApi = api.injectEndpoints({
       LocationCityControllerFindAllApiResponse,
       LocationCityControllerFindAllApiArg
     >({
-      query: () => ({ url: `/location-cities` }),
+      query: (queryArg) => ({
+        url: `/location-cities`,
+        params: {
+          stateId: queryArg,
+        },
+      }),
     }),
     locationCityControllerFindOne: build.query<
       LocationCityControllerFindOneApiResponse,
@@ -1549,7 +1621,12 @@ const injectedRtkApi = api.injectEndpoints({
       BusStopControllerFindAllApiResponse,
       BusStopControllerFindAllApiArg
     >({
-      query: () => ({ url: `/bus-stop` }),
+      query: (queryArg) => ({
+        url: `/bus-stop`,
+        params: {
+          cityId: queryArg,
+        },
+      }),
     }),
     busStopControllerFindOne: build.query<
       BusStopControllerFindOneApiResponse,
@@ -1630,6 +1707,26 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: () => ({ url: `/transaction` }),
     }),
+    transactionControllerCreateLuggageBooking: build.mutation<
+      TransactionControllerCreateLuggageBookingApiResponse,
+      TransactionControllerCreateLuggageBookingApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/transaction/luggage-booking-only`,
+        method: "POST",
+        body: queryArg.createLuggageBookingDto,
+      }),
+    }),
+    transactionControllerMultiBookingToTransaction: build.mutation<
+      TransactionControllerMultiBookingToTransactionApiResponse,
+      TransactionControllerMultiBookingToTransactionApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/transaction/multi-booking-transaction`,
+        method: "POST",
+        body: queryArg,
+      }),
+    }),
     transactionControllerUpdateTransaction: build.mutation<
       TransactionControllerUpdateTransactionApiResponse,
       TransactionControllerUpdateTransactionApiArg
@@ -1704,6 +1801,24 @@ const injectedRtkApi = api.injectEndpoints({
           reference: queryArg.reference,
         },
       }),
+    }),
+    walletControllerGetWalletByUserId: build.query<
+      WalletControllerGetWalletByUserIdApiResponse,
+      WalletControllerGetWalletByUserIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/wallet/user/${queryArg}` }),
+    }),
+    walletControllerGetTransactionsByWalletId: build.query<
+      WalletControllerGetTransactionsByWalletIdApiResponse,
+      WalletControllerGetTransactionsByWalletIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/wallet/wallet/${queryArg}/transactions` }),
+    }),
+    walletControllerGetTransactionsByUserId: build.query<
+      WalletControllerGetTransactionsByUserIdApiResponse,
+      WalletControllerGetTransactionsByUserIdApiArg
+    >({
+      query: (queryArg) => ({ url: `/wallet/user/${queryArg}/transactions` }),
     }),
     appControllerGetHello: build.query<
       AppControllerGetHelloApiResponse,
@@ -1818,6 +1933,31 @@ export type CorporateBodyDocumentControllerUpdateApiArg = {
 export type CorporateBodyDocumentControllerDeleteApiResponse =
   /** status 200 CorporateBody document deleted successfully */ CorporateBodyDocumentResponseDto;
 export type CorporateBodyDocumentControllerDeleteApiArg = string;
+export type NotificationControllerCreateApiResponse =
+  /** status 201 The notification has been successfully created */ Notification;
+export type NotificationControllerCreateApiArg = CreateNotificationDto;
+export type NotificationControllerFindAllApiResponse =
+  /** status 200 The notifications have been successfully retrieved */ Notification[];
+export type NotificationControllerFindAllApiArg = void;
+export type NotificationControllerFindOneApiResponse =
+  /** status 200 The notification has been successfully retrieved */ Notification;
+export type NotificationControllerFindOneApiArg = /** Notification ID */ string;
+export type NotificationControllerUpdateApiResponse =
+  /** status 200 The notification has been successfully updated */ Notification;
+export type NotificationControllerUpdateApiArg = {
+  /** Notification ID */
+  id: string;
+  updateNotificationDto: UpdateNotificationDto;
+};
+export type NotificationControllerRemoveApiResponse = unknown;
+export type NotificationControllerRemoveApiArg = /** Notification ID */ string;
+export type NotificationControllerFindAllByUserApiResponse =
+  /** status 200 The notifications have been successfully retrieved */ Notification[];
+export type NotificationControllerFindAllByUserApiArg = /** User ID */ string;
+export type NotificationControllerMarkAsReadApiResponse =
+  /** status 200 The notification has been marked as read */ Notification;
+export type NotificationControllerMarkAsReadApiArg =
+  /** Notification ID */ string;
 export type VehicleControllerCreateVehicleTypeApiResponse =
   /** status 201 Vehicle type successfully created */ VehicleTypeResponseDto;
 export type VehicleControllerCreateVehicleTypeApiArg = CreateVehicleTypeDto;
@@ -1970,6 +2110,10 @@ export type ParkControllerUpdateParkApiArg = {
 export type ParkControllerDeleteParkApiResponse = unknown;
 export type ParkControllerDeleteParkApiArg =
   /** ID of the park to delete */ string;
+export type ParkControllerFindParkByUserIdApiResponse =
+  /** status 200 Park retrieved successfully */ ParkArrayResponseDto;
+export type ParkControllerFindParkByUserIdApiArg =
+  /** userID of the park */ string;
 export type TripControllerCreateTripApiResponse =
   /** status 201 Trip created successfully */ TripResponseDto;
 export type TripControllerCreateTripApiArg = CreateTripDto;
@@ -2387,7 +2531,9 @@ export type LocationStateControllerCreateApiResponse =
 export type LocationStateControllerCreateApiArg = CreateLocationStateDto;
 export type LocationStateControllerFindAllApiResponse =
   /** status 200 List of location states retrieved. */ LocationStateArrayResponseDto;
-export type LocationStateControllerFindAllApiArg = void;
+export type LocationStateControllerFindAllApiArg = /** Filter by country ID */
+  | string
+  | undefined;
 export type LocationStateControllerFindOneApiResponse =
   /** status 200 Location state retrieved. */ LocationStateResponseDto;
 export type LocationStateControllerFindOneApiArg = string;
@@ -2448,7 +2594,9 @@ export type LocationCityControllerCreateApiResponse =
 export type LocationCityControllerCreateApiArg = CreateLocationCityDto;
 export type LocationCityControllerFindAllApiResponse =
   /** status 200 list of cities */ LocationCityArrayResponseDto;
-export type LocationCityControllerFindAllApiArg = void;
+export type LocationCityControllerFindAllApiArg = /** Filter by state ID */
+  | string
+  | undefined;
 export type LocationCityControllerFindOneApiResponse =
   /** status 200 City found */ LocationCityResponseDto;
 export type LocationCityControllerFindOneApiArg = string;
@@ -2503,7 +2651,9 @@ export type BusStopControllerCreateApiResponse =
 export type BusStopControllerCreateApiArg = CreateBusStopDto;
 export type BusStopControllerFindAllApiResponse =
   /** status 200 list of cities */ BusStopArrayResponseDto;
-export type BusStopControllerFindAllApiArg = void;
+export type BusStopControllerFindAllApiArg = /** Filter by city ID */
+  | string
+  | undefined;
 export type BusStopControllerFindOneApiResponse =
   /** status 200 Bus Stop found */ BusStopResponseDto;
 export type BusStopControllerFindOneApiArg = string;
@@ -2543,6 +2693,17 @@ export type TransactionControllerCreateApiArg = {
 export type TransactionControllerFindAllApiResponse =
   /** status 200 Fuel agencies retrieved successfully */ TransactionArrayResponseDto;
 export type TransactionControllerFindAllApiArg = void;
+export type TransactionControllerCreateLuggageBookingApiResponse =
+  /** status 201 Transactions created successfully */ TransactionResponseDto;
+export type TransactionControllerCreateLuggageBookingApiArg = {
+  /** ID of the booking */
+  bookingId: any;
+  createLuggageBookingDto: CreateLuggageBookingDto;
+};
+export type TransactionControllerMultiBookingToTransactionApiResponse =
+  /** status 201 Transactions created successfully */ TransactionResponseDto;
+export type TransactionControllerMultiBookingToTransactionApiArg =
+  MultiBookingDto;
 export type TransactionControllerUpdateTransactionApiResponse =
   /** status 200 Transaction updated successfully */ TransactionResponseDto;
 export type TransactionControllerUpdateTransactionApiArg = {
@@ -2582,6 +2743,15 @@ export type PaystackNotificationsControllerSearchApiArg = {
   status?: string;
   reference?: string;
 };
+export type WalletControllerGetWalletByUserIdApiResponse =
+  /** status 200 The wallet for the user has been successfully fetched. */ Wallet;
+export type WalletControllerGetWalletByUserIdApiArg = string;
+export type WalletControllerGetTransactionsByWalletIdApiResponse =
+  /** status 200 List of transactions for the specified wallet. */ WalletTransaction[];
+export type WalletControllerGetTransactionsByWalletIdApiArg = string;
+export type WalletControllerGetTransactionsByUserIdApiResponse =
+  /** status 200 List of transactions for the specified user. */ WalletTransaction[];
+export type WalletControllerGetTransactionsByUserIdApiArg = string;
 export type AppControllerGetHelloApiResponse = unknown;
 export type AppControllerGetHelloApiArg = void;
 export type User = {
@@ -2878,6 +3048,31 @@ export type UpdateCorporateBodyDocumentDto = {
   corporateBodyId?: string;
   /** The expiration date of the document (optional) */
   expireAt?: string;
+};
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  read: boolean;
+  userId: string;
+  /** The date when the individual was created */
+  createdAt: string;
+  /** The date when the individual was last updated */
+  updatedAt: string;
+  /** The individual auth/user detail */
+  user: User;
+};
+export type CreateNotificationDto = {
+  title: string;
+  message: string;
+  read: boolean;
+  userId: string;
+};
+export type UpdateNotificationDto = {
+  title?: string;
+  message?: string;
+  read?: boolean;
+  userId?: string;
 };
 export type VehicleType = {
   id: string;
@@ -3544,12 +3739,34 @@ export type UpdateTripDto = {
   uniqueID?: string;
   cost?: number;
 };
+export type LugguageBooking = {
+  id: string;
+  status: string;
+  amount: number;
+  weight: number;
+  description: string;
+  uniqueID: string;
+  userId: string;
+  bookingId: string;
+  transactionId: string;
+  /** The date when the document was created */
+  createdAt: string;
+  /** The date when the document was last updated */
+  updatedAt: string;
+  /** The user who owns this resource */
+  user: User;
+  /** Instance of the Booking */
+  booking: Booking;
+  /** Instance of the Transaction */
+  transaction: Transaction;
+};
 export type Transaction = {
   id: string;
   description: string;
   amount: number;
   uniqueID: string;
   status: string;
+  type: string;
   /** The date when the user was created */
   createdAt: string;
   /** The date when the user was last updated */
@@ -3559,6 +3776,8 @@ export type Transaction = {
   user: User;
   /** Bookings linked to this transaction */
   bookings: Booking[];
+  /** lugguage Bookings linked to this transaction */
+  lugguage: LugguageBooking;
 };
 export type Booking = {
   id: string;
@@ -4501,6 +4720,10 @@ export type TransactionResponseDto = {
 export type CreateTransactionDto = {
   /** bookingId */
   bookingId: string;
+  /** amount need for luggage payment alone */
+  amount: number;
+  /** description need for luggage payment alone */
+  descriptionLuggage: string;
 };
 export type TransactionArrayResponseDto = {
   status: number;
@@ -4508,11 +4731,60 @@ export type TransactionArrayResponseDto = {
   message?: string;
   data: Transaction[];
 };
+export type CreateLuggageBookingDto = {
+  /** Amount for the luggage booking */
+  amount: number;
+  /** Weight of the luggage in kilograms */
+  weight: number;
+  /** Description of the luggage booking */
+  description?: string;
+  /** User ID that owns this luggage booking */
+  userId: string;
+  /** Booking ID associated with the luggage booking */
+  bookingId: string;
+};
+export type MultiBookingDto = {
+  /** Array of Booking Details */
+  bookings: CreateBookingUnregisteredDto[];
+};
 export type UpdateTransactionDto = {
   /** bookingId */
   bookingId: string;
 };
 export type Object = {};
+export type Float = {};
+export type WalletTransaction = {
+  id: string;
+  transactionType: string;
+  /** The description of transaction brief but detailed */
+  description: String;
+  /** The amount for the transaction */
+  amount: Float;
+  walletId: string;
+  /** The date when the request was created */
+  createdAt: string;
+  /** The date when the document was last updated */
+  updatedAt: string;
+  userId: string;
+  /** Instance of the Wallet */
+  wallet: Wallet;
+  /** The user who owns this resource */
+  user: User;
+};
+export type Wallet = {
+  id: string;
+  balance: number;
+  withdrawal: number;
+  userId: string;
+  /** The date when the individual was created */
+  createdAt: string;
+  /** The date when the individual was last updated */
+  updatedAt: string;
+  /** The individual auth/user detail */
+  user: User;
+  /** The individual auth/user detail */
+  walletTransactions: WalletTransaction[];
+};
 export const {
   useAuthControllerLoginMutation,
   useAuthControllerVerifyEmailQuery,
@@ -4548,6 +4820,16 @@ export const {
   useLazyCorporateBodyDocumentControllerSearchQuery,
   useCorporateBodyDocumentControllerUpdateMutation,
   useCorporateBodyDocumentControllerDeleteMutation,
+  useNotificationControllerCreateMutation,
+  useNotificationControllerFindAllQuery,
+  useLazyNotificationControllerFindAllQuery,
+  useNotificationControllerFindOneQuery,
+  useLazyNotificationControllerFindOneQuery,
+  useNotificationControllerUpdateMutation,
+  useNotificationControllerRemoveMutation,
+  useNotificationControllerFindAllByUserQuery,
+  useLazyNotificationControllerFindAllByUserQuery,
+  useNotificationControllerMarkAsReadMutation,
   useVehicleControllerCreateVehicleTypeMutation,
   useVehicleControllerGetAllVehicleTypesQuery,
   useLazyVehicleControllerGetAllVehicleTypesQuery,
@@ -4601,6 +4883,8 @@ export const {
   useLazyParkControllerFindParkByIdQuery,
   useParkControllerUpdateParkMutation,
   useParkControllerDeleteParkMutation,
+  useParkControllerFindParkByUserIdQuery,
+  useLazyParkControllerFindParkByUserIdQuery,
   useTripControllerCreateTripMutation,
   useTripControllerFindAllQuery,
   useLazyTripControllerFindAllQuery,
@@ -4792,6 +5076,8 @@ export const {
   useTransactionControllerCreateMutation,
   useTransactionControllerFindAllQuery,
   useLazyTransactionControllerFindAllQuery,
+  useTransactionControllerCreateLuggageBookingMutation,
+  useTransactionControllerMultiBookingToTransactionMutation,
   useTransactionControllerUpdateTransactionMutation,
   useTransactionControllerFindByIdQuery,
   useLazyTransactionControllerFindByIdQuery,
@@ -4808,6 +5094,12 @@ export const {
   useLazyPaystackNotificationsControllerFindByIdQuery,
   usePaystackNotificationsControllerSearchQuery,
   useLazyPaystackNotificationsControllerSearchQuery,
+  useWalletControllerGetWalletByUserIdQuery,
+  useLazyWalletControllerGetWalletByUserIdQuery,
+  useWalletControllerGetTransactionsByWalletIdQuery,
+  useLazyWalletControllerGetTransactionsByWalletIdQuery,
+  useWalletControllerGetTransactionsByUserIdQuery,
+  useLazyWalletControllerGetTransactionsByUserIdQuery,
   useAppControllerGetHelloQuery,
   useLazyAppControllerGetHelloQuery,
 } = injectedRtkApi;

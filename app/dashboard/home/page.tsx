@@ -8,9 +8,10 @@ import Image from "next/image";
 import BreadscrumbsDisplay from '../BreadscrumbsDisplay';
 import { useLazyTripControllerGetTripsByVehicleOwnerIdQuery, useLazyVehicleControllerGetMyVehiclesQuery } from '@/store/api';
 import FilteredParkks from './FilteredParkks';
+import DashboardOwner from '@/components/routedDashboard/parkOwner/dashboardOwner/DashboardOwner';
+import DashboardManager from '@/components/routedDashboard/parkManager/dashboardManager/DashboardManager';
 
 const page = () => {
-    const [open, setOpen] = useState(false);
 
     const [userData, setUserData] = useState<any>(null);
   
@@ -21,60 +22,51 @@ const page = () => {
       }
     }, []);
   
-    const onOpenModal = () => {
-      // e.preventDefault();
-      setOpen(true);
-    };
-    const onCloseModal = () => setOpen(false);
-  
-    console.log(userData);
+
+    // console.log(userData);
   
     const [getActiveVehicle, { data: activeVehicles, isLoading }] =
       useLazyVehicleControllerGetMyVehiclesQuery<any>();
   
-    const [getUserTripsById, { data: userTripsById }] =
-      useLazyTripControllerGetTripsByVehicleOwnerIdQuery<any>();
+    // const [getUserTripsById, { data: userTripsById }] =
+    //   useLazyTripControllerGetTripsByVehicleOwnerIdQuery<any>();
   
-    console.log(activeVehicles);
-    // Fetch vehicle types on component mount
-    useEffect(() => {
-      getActiveVehicle(); // Trigger the API call
-    }, [getActiveVehicle]);
+    // // console.log(activeVehicles);
+    // // Fetch vehicle types on component mount
+    // useEffect(() => {
+    //   getActiveVehicle(); // Trigger the API call
+    // }, [getActiveVehicle]);
   
-    useEffect(() => {
-      if (userData) {
-        // setIsLoading(true); // Set loading state
-        getUserTripsById(userData.individual.userId).unwrap(); // Handle response or errors
-        // .finally(() => setIsLoading(false)); // Reset loading state
-      }
-    }, [userData, getUserTripsById]);
+    // useEffect(() => {
+    //   if (userData) {
+    //     // setIsLoading(true); // Set loading state
+    //     getUserTripsById(userData.individual.userId).unwrap(); // Handle response or errors
+    //     // .finally(() => setIsLoading(false)); // Reset loading state
+    //   }
+    // }, [userData, getUserTripsById]);
   
-    useEffect(() => {
-      if (isLoading) {
-        onOpenModal();
-      } else {
-        onCloseModal();
-      }
-    }, [isLoading]);
+
   
-    const totalRevenue =
-      activeVehicles?.data?.reduce((sum, vehicle) => {
-        const revenue = parseFloat(vehicle.totalRevenue) || 0;
-        return sum + revenue;
-      }, 0) || 0;
+    // const totalRevenue =
+    //   activeVehicles?.data?.reduce((sum, vehicle) => {
+    //     const revenue = parseFloat(vehicle.totalRevenue) || 0;
+    //     return sum + revenue;
+    //   }, 0) || 0;
   
   
   return (
     <DashboardLayout>
-      {isLoading ? null : (
+      {userData?.userCategory === "PARK_OWNER" ? (
+        <DashboardOwner />
+      ) : userData?.userCategory === "MANAGER" ? (
+       <DashboardManager />
+      ) : (
+        <div></div>
+      )}
+      {/* {isLoading ? null : (
         <div className="bg-white overflow-hidden rounded-[8px] px-3 md:px-8 py-7 md:py-9">
           <BreadscrumbsDisplay />
-          {/* <h5 className="md:text-[20px] text-[16px] font-light mb-4">
-            Account Type:{" "}
-            <span className="font-[500]">
-              {userData?.individual ? "Individual" : "Corporate"}
-            </span>
-          </h5> */}
+       
 
           <div className="bg-primary mt-5 rounded-[10px] overflow-hidden">
             <div className="flex justify-between items-center">
@@ -107,13 +99,12 @@ const page = () => {
                   </div>
 
                   <h4 className=" text-[35px] md:text-[48px] font-[700]">
-                    ₦{totalRevenue.toFixed(2)}
+                   ₦{totalRevenue.toFixed(2)} 
                   </h4>
                 </div>
               </div>
               <div className="md:block hidden">
-                {/* <img src="/dashboard/Group 20.svg" alt="Logo" className="" /> */}
-                {/* <div className="relative w-full h-64"> */}
+
                 <Image
                   src="/images/dashboard/Group 20.svg"
                   alt="Descriptive alt text"
@@ -122,7 +113,7 @@ const page = () => {
                   height={100}
                   priority
                 />
-                {/* </div> */}
+           
               </div>
             </div>
           </div>
@@ -155,26 +146,12 @@ Add Park Manager
               <FilteredParkks />
             </div>
 
-            {/* <div className="block sm:hidden">
-              <FilteredFleetsMobile />
-            </div> */}
+        
           </section>
         </div>
-      )}
+      )} */}
 
-      <Modal
-        classNames={{
-          modal: "rounded-[10px] overflow-visible relative",
-        }}
-        open={open}
-        onClose={onCloseModal}
-        showCloseIcon={false} // Hides the close button
-        center
-      >
-        <div className="px-2 md:px-5 w-[100px] h-[100px] flex justify-center items-center text-center">
-          <LoadingSpinnerPage />
-        </div>
-      </Modal>
+  
     </DashboardLayout>
   )
 }

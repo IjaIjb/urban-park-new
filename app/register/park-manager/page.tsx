@@ -10,6 +10,7 @@ import Link from "next/link";
 import LoadingSpinner from "@/components/UI/LoadingSpinner";
 import {
   useAuthControllerLoginMutation,
+  useLazyParkControllerFindAllParksQuery,
   useParkControllerCreateParkMutation,
   useUserControllerCreateParkManagerBodyMutation,
   useUserControllerCreateParkOwnerBodyMutation,
@@ -43,9 +44,21 @@ const Page = () => {
       const [signup, { isLoading }] =
       useUserControllerCreateParkManagerBodyMutation();
     
-    
+      const [getAllParks, { data: parkData }] =
+      useLazyParkControllerFindAllParksQuery();
+       
       const [userData, setUserData] = useState<any>(null);
-    
+        useEffect(() => {
+          getAllParks({
+            offset: 0,       // Default offset
+            limit: 10,       // Default limit (adjust as needed)
+            region: "",      // Can be dynamically set later
+            city: "",        // Can be dynamically set later
+            description: "", // Optional filter
+          });
+        }, [getAllParks]);
+
+        console.log(parkData)
       useEffect(() => {
         const storedUserData = localStorage.getItem("user");
         if (storedUserData) {
